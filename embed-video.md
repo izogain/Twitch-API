@@ -40,6 +40,7 @@ Info such as video channel, length, description, viewcounts are available throug
 	};
 	var player = new Twitch.Player("{PLAYER_DIV_ID}", options);
 	player.setVolume(0.5);
+	player.addEventListener(Twitch.Player.PAUSE, () => { console.log('Player is paused!'); });
 </script>
 ```
 
@@ -48,6 +49,7 @@ Info such as video channel, length, description, viewcounts are available throug
 - `height:Number`	: height of embed player in pixels
 - `channel:String`	: channel name for live streams `monstercat` 
 - `video:String`	: video id for past broadcast `v40464143` 
+- `playsinline:Boolean` : embed player plays inline for mobile iOS apps
 
 Either a channel or a video can be loaded at one time.
 
@@ -141,8 +143,8 @@ Returns an `Object` with the stats on the player and the current video or live s
 
 `addEventListener(event:String, callback:Function)`
 
-- `event`     : the event to listen to `"pause"`
-- `callback`  : function to call when `event` is triggered `function() { console.log("Event fired"); }`
+- `event`     : the event to listen to `Twitch.Player.PAUSE`
+- `callback`  : function to call when `event` is triggered `function() { console.log("Pause event fired"); }`
 
 `removeEventListener(event:String, callback:Function)`
 
@@ -151,13 +153,38 @@ Returns an `Object` with the stats on the player and the current video or live s
 
 
 ### Events
-Events emitted by player. Call `addEventListener(event:String, callback:Function)` to listen to events.
+Event string constants emitted by and defined by the player. Call `addEventListener(event:String, callback:Function)` to listen to events.
 
-- `"ready"`  : Emitted when player is ready to accept function calls.
-- `"play"`   : Emitted when player is playing.
-- `"pause"`  : Emitted when player is paused. Buffering and seeking is not considered paused.
-- `"ended"`  : Emitted when video or stream ends.
-- `"online"` : Emitted when loaded channel goes online.
-- `"offline"`: Emitted when loaded channel goes offline.
+- `Twitch.Player.READY`  : Emitted when player is ready to accept function calls.
+- `Twitch.Player.PLAY`: Emitted when player is playing.
+- `Twitch.Player.PAUSE`  : Emitted when player is paused. Buffering and seeking is not considered paused.
+- `Twitch.Player.ENDED`  : Emitted when video or stream ends.
+- `Twitch.Player.ONLINE` : Emitted when loaded channel goes online.
+- `Twitch.Player.OFFLINE`: Emitted when loaded channel goes offline.
 
 
+# Twitch Clips Embed Player
+
+Embedding a Clip is separate from embedding a live stream or VOD. The Clip embed player
+uses a different set of query parameters and doesn’t support the JavaScript interactive embed.
+
+## Non-Interactive Iframe Embed
+
+```html
+<iframe 
+    src="https://clips.twitch.tv/embed?clip={CLIP_ID}" 
+    height="360" 
+    width="640" 
+    frameborder="0" 
+    scrolling="no"
+    allowfullscreen="true">
+</iframe>
+```
+
+### URL Query Parameters
+**Required**
+- `clip`: The `"channel/slug"` identifier. Eg: `eleaguetv/ZealousMosquitoPeteZarollTie`
+
+**Optional**
+- `autoplay`  : Automatically starts playing without the user clicking play. `true` or `false`. Defaults to `true`.
+- `muted`     : Sets the initial muted state. `true` or `false`. Defaults to `false`.
